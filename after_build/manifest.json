@@ -1,0 +1,15 @@
+{
+   "background": {
+      "persistent": false,
+      "scripts": [ "new_tab.js" ]
+   },
+   "browser_action": {
+      "default_title": "Click to start!"
+   },
+   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+   "description": "A Debugging tool to help you test Websocket APIs",
+   "manifest_version": 2,
+   "name": "Smart Websocket Client",
+   "permissions": [  ],
+   "version": "1.0.0"
+}
