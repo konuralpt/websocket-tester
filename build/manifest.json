@@ -1,15 +1,11 @@
 {
-   "background": {
-      "persistent": false,
-      "scripts": [ "eventPage.js" ]
-   },
-   "browser_action": {
-      "default_title": "Click to start!"
-   },
-   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-   "description": "A Debugging tool to help you test Websocket APIs",
-   "manifest_version": 2,
-   "name": "Smart Websocket Client",
-   "permissions": [  ],
-   "version": "1.0.0"
+  "short_name": "React App",
+  "name": "Create React App Sample",
+     "manifest_version": 2,
+   "version": "1.0.0",
+
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
 }
