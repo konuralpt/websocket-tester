@@ -2,20 +2,34 @@ import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Websocket from 'react-websocket';
-import logo from './logo.svg';
 import './App.css';
+require('signalr');
 
 const valid_websocket = /^wss?:\/\/([0-9]{1,3}(?:\.[0-9]{1,3}){3}|[a-zA-Z]+)(:[0-9]{1,5})$/i;
+/*const script = document.createElement("script");
 
+script.src = "http://localhost:65297/signalr/hubs";
+script.async = true;
+
+document.body.appendChild(script);*/
 function App() {
   function connect(){
+    var connection = window.$.hubConnection('http://localhost:65297');
+    connection.qs = { 'version' : '1.0' };
+    var contosoChatHubProxy = connection.createHubProxy('CraashHub');
+    connection.start().done(function(){ 
+      console.log('Now connected, connection ID=' + connection.id); 
+      contosoChatHubProxy.invoke('craash');
+    });
+    
+    /*
     if(valid_websocket.test(web_socket_url)){
       render_websocket(true);
     }else{
       set_valid(false);
       toast.error("Address is not valid!");
 
-    }
+    }*/
   };
 
   function onMessage(data) {
