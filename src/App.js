@@ -6,21 +6,35 @@ import './App.css';
 require('signalr');
 
 const valid_websocket = /^wss?:\/\/([0-9]{1,3}(?:\.[0-9]{1,3}){3}|[a-zA-Z]+)(:[0-9]{1,5})$/i;
-/*const script = document.createElement("script");
 
-script.src = "http://localhost:65297/signalr/hubs";
-script.async = true;
-
-document.body.appendChild(script);*/
 function App() {
   function connect(){
+    /*
     var connection = window.$.hubConnection('http://localhost:65297');
-    connection.qs = { 'version' : '1.0' };
+    
     var contosoChatHubProxy = connection.createHubProxy('CraashHub');
+    console.log(contosoChatHubProxy);
     connection.start().done(function(){ 
       console.log('Now connected, connection ID=' + connection.id); 
-      contosoChatHubProxy.invoke('craash');
-    });
+      contosoChatHubProxy.invoke('craash','');
+    });*/
+
+    const script = document.createElement("script");
+    script.src = "http://localhost:65297/signalr/hubs";
+    script.async = true;
+    document.body.appendChild(script);
+    script.onload = () => {
+      window.$.connection.hub.url= 'http://localhost:65297/signalr';
+      var contosoChatHubProxy = window.$.connection.CraashHub;
+      window.$.connection.CraashHub.client.connected = function () {
+        
+      };
+      window.$.connection.hub.start().done(function(){ 
+        console.log('Now connected, connection ID='+window.$.connection.hub.id); 
+        //contosoChatHubProxy.invoke('craash','asd');
+      }).fail(function(){ console.log('Could not Connect!'); });
+    };
+
     
     /*
     if(valid_websocket.test(web_socket_url)){
