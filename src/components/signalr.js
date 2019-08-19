@@ -16,47 +16,8 @@ class _signalr extends React.Component {
         incoming_event: 'Response',
         response_area: '',
         connected: false
-        
-    }
-  }
-
-  connect(){
-
-    const script = document.createElement("script");
-    script.src = this.state.uri + "/signalr/hubs";
-    script.async = true;
-    document.body.appendChild(script);
-
-    script.onload = () => {
-      window.$.connection.hub.url= this.state.uri + '/signalr';
-
-      window.$.connection[this.state.hub_name].client.connected = function () { };
-
-      for(var i=0; i < this.state.events.length; i++){
-        const incoming_event_name = this.state.events[i];
-        window.$.connection[this.state.hub_name].client[this.state.events[i]] = function(...args){
-          this.set_incoming_event(incoming_event_name);
-          this.set_response_area(args);
-        }
-      }
-      window.$.connection.hub.reconnecting(function () {
-        toast.warning("Disconnected. Trying to reconnect");
-        this.set_connectin_state(false);
-      });
-      window.$.connection.hub.reconnected(function() {
-        toast.success("Back to online");
-        this.set_connectin_state(true);
-      });
-      window.$.connection.hub.disconnected(function() {
-        toast.error("Disconnected");
-        this.set_connectin_state(false);
-      });
-      window.$.connection.hub.start().done(function(){
-        this.set_connectin_state(true); 
-        toast.success("Connected successfully");
-        toast('Connection ID= '+window.$.connection.hub.id);
-      }).fail(function(){ toast.warning("Server not available!"); });
     };
+    this.set_connectin_state = this.set_connectin_state.bind(this);
   }
 
   uri_change(event){
@@ -77,7 +38,7 @@ class _signalr extends React.Component {
     this.setState({response_area: value})
   }
   set_connectin_state(value){
-    this.setState({connected: value})
+    this.setState({connected: value});
   }
   set_incoming_event(value){
     this.setState({incoming_event: value})
@@ -94,6 +55,44 @@ class _signalr extends React.Component {
       window.$.connection[this.state.hub_name].invoke(this.state.invoke);
     }
   }
+  connect(){
+    const script = document.createElement("script");
+    script.src = this.state.uri + "/signalr/hubs";
+    script.async = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      window.$.connection.hub.url= this.state.uri + '/signalr';
+
+      window.$.connection[this.state.hub_name].client.connected = () => { };
+
+      for(var i=0; i < this.state.events.length; i++){
+        const incoming_event_name = this.state.events[i];
+        window.$.connection[this.state.hub_name].client[this.state.events[i]] = (...args) => {
+          this.set_incoming_event(incoming_event_name);
+          this.set_response_area(args);
+        }
+      }
+      window.$.connection.hub.reconnecting(() => {
+        toast.warning("Disconnected. Trying to reconnect");
+        this.set_connectin_state(false);
+      });
+      window.$.connection.hub.reconnected(() => {
+        toast.success("Back to online");
+        this.set_connectin_state(true);
+      });
+      window.$.connection.hub.disconnected(() => {
+        toast.error("Disconnected");
+        this.set_connectin_state(false);
+      });
+      window.$.connection.hub.start().done(() => {
+        this.set_connectin_state(true); 
+        toast.success("Connected successfully");
+        toast('Connection ID= '+window.$.connection.hub.id);
+      }).fail(() => { toast.warning("Server not available!"); });
+    };
+  }
+
 
   render() {
     return (
