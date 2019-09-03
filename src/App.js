@@ -27,6 +27,11 @@ function App() {
 
   return (
     <div className="App">
+      
+      <div className="ribbon">
+        <div className="label"><a className="github" href="https://github.com/konuralpt/websocket-tester" target="_blank">GitHub</a></div>
+      </div>
+
       <div className="row">
         <div className="col-md-12">
 
