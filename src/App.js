@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import _ws from './components/ws';
 import _signalr from './components/signalr';
-
+import _socketio from './components/socketio';
 
 
 function App() {
@@ -18,6 +18,8 @@ function App() {
       return(<_ws />)
     }else if(socketType === "signalr"){
       return(<_signalr />)
+    }else if(socketType === "socketio"){
+      return(<_socketio />)
     }
   }
   

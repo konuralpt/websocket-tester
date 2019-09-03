@@ -2,10 +2,8 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import TagsInput from 'react-tagsinput';
 
-require('signalr');
 
-
-class _signalr extends React.Component {
+class _socketio extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,8 +26,6 @@ class _signalr extends React.Component {
   }
   invoke_change(event){
     this.setState({invoke: event.target.value});
-  }
-  handleChange(events) {
   }
   add_event(events){
     this.setState({events})
@@ -57,39 +53,37 @@ class _signalr extends React.Component {
   }
   connect(){
     const script = document.createElement("script");
-    script.src = this.state.uri + "/signalr/hubs";
+    script.src = this.state.uri + "/socket.io/socket.io.js";
     script.async = true;
     document.body.appendChild(script);
 
     script.onload = () => {
-      window.$.connection.hub.url= this.state.uri + '/signalr';
+      const script2 = document.createElement("script");
+      script2.type = 'text/javascript';
+      script2.innerHTML = `var socket = io('${this.state.uri}');`
+      script.async = true;
+      document.body.appendChild(script2);
 
-      window.$.connection[this.state.hub_name].client.connected = () => { };
-
-      for(var i=0; i < this.state.events.length; i++){
-        const incoming_event_name = this.state.events[i];
-        window.$.connection[this.state.hub_name].client[this.state.events[i]] = (...args) => {
-          this.set_incoming_event(incoming_event_name);
-          this.set_response_area(args);
-        }
-      }
-      window.$.connection.hub.reconnecting(() => {
-        toast.warning("Disconnected. Trying to reconnect");
-        this.set_connectin_state(false);
-      });
-      window.$.connection.hub.reconnected(() => {
-        toast.success("Back to online");
+      window.socket.on('connect', () => {
         this.set_connectin_state(true);
+        toast.success("Connected successfully");
       });
-      window.$.connection.hub.disconnected(() => {
+
+      this.state.events.map((item) => {
+        window.socket.on(item, (...args) => {
+          const incoming_event_name = item;
+          this.set_incoming_event(incoming_event_name);
+          this.set_response_area(JSON.stringify(args));
+        });
+      })
+
+      window.socket.on('event', (data) => {
+        console.log(data)
+      });
+      window.socket.on('disconnect', () => {
         toast.error("Disconnected");
         this.set_connectin_state(false);
       });
-      window.$.connection.hub.start().done(() => {
-        this.set_connectin_state(true); 
-        toast.success("Connected successfully");
-        toast('Connection ID= '+window.$.connection.hub.id);
-      }).fail(() => { toast.warning("Server not available!"); });
     };
   }
 
@@ -101,12 +95,8 @@ class _signalr extends React.Component {
             <div>
                 <div className="form-group row">
                     <label htmlFor="inputPassword" className="col-sm-2 col-form-label">SignalR Address</label>
-                    <div className="col-sm-2">
-                    <input type="text" className="form-control" onChange={this.uri_change.bind(this)} placeholder="http://localhost:65297" />
-                    </div>
-                    <label htmlFor="inputPassword" className="col-sm-1 col-form-label">HubName</label>
-                    <div className="col-sm-2">
-                    <input type="text" className="form-control" onChange={this.hub_name_change.bind(this)} placeholder="ChatHub" />
+                    <div className="col-sm-5">
+                    <input type="text" className="form-control" onChange={this.uri_change.bind(this)} placeholder="http://localhost:3000" />
                     </div>
                 </div>
                 <div className="form-group row">
@@ -163,4 +153,4 @@ class _signalr extends React.Component {
 
 
 }
-export default _signalr;
+export default _socketio;

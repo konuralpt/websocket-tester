@@ -1,6 +1,6 @@
 import React from 'react';
 import Websocket from 'react-websocket';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const valid_websocket = /^wss?:\/\/([0-9]{1,3}(?:\.[0-9]{1,3}){3}|[a-zA-Z]+)(:[0-9]{1,5})$/i;
 
@@ -11,7 +11,8 @@ class _ws extends React.Component {
     this.state = {
       render_websocket: false,
       websocket_validation: false,
-      web_socket_url: ''
+      web_socket_url: '',
+      response_area: ''
     }
   }
   connect(){
@@ -22,9 +23,8 @@ class _ws extends React.Component {
       this.toastMessage(3,"Address is not valid!");
     }
   }
-
   onMessage(data) {
-    
+    this.set_response_area(data);
   };
   onOpen(){
     this.setState({websocket_validation: true})
@@ -35,7 +35,15 @@ class _ws extends React.Component {
     this.setState({websocket_validation: false})
     this.setState({render_websocket: false})
   };
-  
+
+  sendMessage(message){
+    if(this.state.render_websocket){
+      this.refWebSocket.sendMessage(message);
+    }
+  }
+  set_response_area(value){
+    this.setState({response_area: value})
+  }
   web_socket_url_change(event){
     this.setState({web_socket_url: event.target.value});
   }
@@ -59,6 +67,9 @@ class _ws extends React.Component {
             onOpen={this.onOpen.bind(this)}
             onMessage={this.onMessage.bind(this)}
             onClose={this.onClose.bind(this)}
+            ref={Websocket => {
+              this.refWebSocket = Websocket;
+            }}
             />
             :
             <div></div>
@@ -86,12 +97,17 @@ class _ws extends React.Component {
         </div>
       </form>
         <div className="row">
-          <div className="col-md-10" style={{padding: 30}}>
+          <div className="col-md-9" style={{padding: 30}}>
             <div className="input-group">
               <div className="input-group-prepend">
                 <span className="input-group-text">Request</span>
               </div>
               <textarea className="form-control" aria-label="Request" rows="8"></textarea>
+            </div>
+          </div>
+          <div className="col-md-2" style={{padding: 30}}>
+            <div className="input-group">
+              <button className="btn btn-dark" onClick={this.sendMessage.bind(this)} style={{marginTop: "30%"}}>Send</button>
             </div>
           </div>
         </div>
@@ -102,7 +118,7 @@ class _ws extends React.Component {
               <div className="input-group-prepend">
                 <span className="input-group-text">Response</span>
               </div>
-              <textarea className="form-control" aria-label="Response" rows="8"></textarea>
+              <textarea className="form-control" aria-label="Response" rows="8" value={this.state.response_area} disabled></textarea>
             </div>
           </div>
         </div>
