@@ -1,8 +1,9 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Websocket from 'react-websocket';
 import { toast } from 'react-toastify';
 
-const valid_websocket = /^wss?:\/\/([0-9]{1,3}(?:\.[0-9]{1,3}){3}|[a-zA-Z]+)(:[0-9]{1,5})$/i;
+const valid_websocket = /^wss?:\/\/([0-9]{1,3}(?:\.[0-9]{1,3}){3}|[a-zA-Z]+)(:[0-9]{1,5})(\/.+)?$/i;
 
 
 class _ws extends React.Component {
@@ -12,12 +13,24 @@ class _ws extends React.Component {
       render_websocket: false,
       websocket_validation: false,
       web_socket_url: '',
-      response_area: ''
+      response_area: '',
+      request_area: '',
+      suggetions: [],
+      show:false,
     }
+    this.state.suggetions = localStorage.getItem('ws').split('|');
   }
   connect(){
     if(valid_websocket.test(this.state.web_socket_url)){
       this.setState({render_websocket: true});
+
+      const ws = localStorage.getItem('ws')
+      if(ws && ws.indexOf(this.state.web_socket_url) === -1){
+        localStorage.setItem('ws',ws+'|'+this.state.web_socket_url)
+      }else{
+        localStorage.setItem('ws',this.state.web_socket_url)
+      }
+
     }else{
       this.setState({websocket_validation: false});
       this.toastMessage(3,"Address is not valid!");
@@ -36,9 +49,10 @@ class _ws extends React.Component {
     this.setState({render_websocket: false})
   };
 
-  sendMessage(message){
+  sendMessage(){
+    console.log(this.state.request_area);
     if(this.state.render_websocket){
-      this.refWebSocket.sendMessage(message);
+      this.refWebSocket.sendMessage(this.state.request_area);
     }
   }
   set_response_area(value){
@@ -46,6 +60,18 @@ class _ws extends React.Component {
   }
   web_socket_url_change(event){
     this.setState({web_socket_url: event.target.value});
+  }
+  web_socket_url_click(){
+    console.log(this.show);
+    this.setState({show: !this.state.show});
+  }
+  request_area_change(event){
+    this.setState({request_area: event.target.value});
+  }
+  set_web_socket_url(item){
+    console.log(item);
+    this.setState({web_socket_url: item});
+    this.setState({show: !this.state.show});    
   }
 
   toastMessage(type,message){
@@ -78,7 +104,14 @@ class _ws extends React.Component {
         <div className="form-group row">
           <label htmlFor="inputPassword" className="col-sm-2 col-form-label">WebSocket Address</label>
           <div className="col-sm-6">
-          <input type="text" className="form-control" onChange={this.web_socket_url_change.bind(this)} placeholder="ws://0.0.0.0:8181" />
+          <input type="text" className="form-control" onClick={this.web_socket_url_click.bind(this)} onChange={this.web_socket_url_change.bind(this)} value={this.state.web_socket_url} placeholder="ws://0.0.0.0:8181" />
+          <div className="suggestbox" style={{display: this.state.show ? "block" : "none" }}>
+            <ul className="list-group">
+            {this.state.suggetions.map((item, key) =>
+                <li key={key} onClick={() => {this.set_web_socket_url(item)}} className="list-group-item suggest-item">{item}</li>
+            )}
+            </ul>
+          </div>
           </div>
         </div>
         <div className="form-group row">
@@ -102,7 +135,7 @@ class _ws extends React.Component {
               <div className="input-group-prepend">
                 <span className="input-group-text">Request</span>
               </div>
-              <textarea className="form-control" aria-label="Request" rows="8"></textarea>
+              <textarea className="form-control" aria-label="Request" rows="8" onChange={this.request_area_change.bind(this)} value={this.state.request_area}></textarea>
             </div>
           </div>
           <div className="col-md-2" style={{padding: 30}}>
