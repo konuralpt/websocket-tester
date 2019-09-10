@@ -64,6 +64,8 @@ code {
   padding-left: 0px !important;
   position: absolute !important;
   z-index: 100;
+  max-height: 197px;
+  overflow-y: scroll;
 }
 
 .suggest-item:hover{

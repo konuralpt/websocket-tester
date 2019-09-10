@@ -18,7 +18,11 @@ class _ws extends React.Component {
       suggetions: [],
       show:false,
     }
-    this.state.suggetions = localStorage.getItem('ws').split('|');
+    const suggestions = localStorage.getItem('ws');
+    if(suggestions){
+      this.state.suggetions = suggestions.split('|');
+    }
+    
   }
   connect(){
     if(valid_websocket.test(this.state.web_socket_url)){
