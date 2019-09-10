@@ -58,7 +58,6 @@ function App() {
         renderComponent()
       }
       <ToastContainer />
-
     </div>
   );
 }

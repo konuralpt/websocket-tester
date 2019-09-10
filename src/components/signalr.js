@@ -63,7 +63,7 @@ class _signalr extends React.Component {
     if(type === 'uri'){
       this.setState({uri: value});
     }else if(type === 'hub'){
-      this.setState({hub: value});
+      this.setState({hub_name: value});
     }
     this.set_suggestion_visibility(type);
   }
@@ -109,6 +109,14 @@ class _signalr extends React.Component {
     }
   }
   connect(){
+        /*const connection = new signalR.HubConnectionBuilder()
+    .withUrl("http://192.168.0.25/socket/CraashHub")
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
+
+connection.start().then(function () {
+    console.log("connected");
+});*/
     this.set_localStorage('uri');
     this.set_localStorage('hub');
     const script = document.createElement("script");
@@ -170,7 +178,7 @@ class _signalr extends React.Component {
                     </div>
                     <label htmlFor="inputPassword" className="col-sm-1 col-form-label">HubName</label>
                     <div className="col-sm-2">
-                    <input type="text" value={this.state.hub} onClick={() =>{this.set_suggestion_visibility('hub')}} className="form-control" onChange={this.hub_name_change.bind(this)} placeholder="ChatHub" />
+                    <input type="text" value={this.state.hub_name} onClick={() =>{this.set_suggestion_visibility('hub')}} className="form-control" onChange={this.hub_name_change.bind(this)} placeholder="ChatHub" />
                     <div className="suggestbox" style={{display: this.state.show_hub_suggestion ? "block" : "none" }}>
                         <ul className="list-group">
                         {this.state.hub_suggestion.map((item, key) =>

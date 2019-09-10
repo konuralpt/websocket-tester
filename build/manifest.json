@@ -6,10 +6,9 @@
   "browser_action": {
      "default_title": "Wide WebSocket Client"
   },
-  "content_security_policy": "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'",
   "description": "WebSocket Clients to test your server",
   "manifest_version": 2,
   "name": "Wide WebSocket Client",
   "permissions": [ "<all_urls>" ],
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
