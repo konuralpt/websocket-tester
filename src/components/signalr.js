@@ -1,7 +1,6 @@
 import React from 'react';
 import { toast } from 'react-toastify';
 import TagsInput from 'react-tagsinput';
-
 require('signalr');
 
 
@@ -34,6 +33,9 @@ class _signalr extends React.Component {
       this.state.hub_suggestion = hub_suggestions.split('|');
     }
     
+  }
+  componentDidMount(){
+    window.$('.selectpicker').selectpicker();
   }
 
   uri_change(event){
@@ -96,6 +98,10 @@ class _signalr extends React.Component {
 
 
     }
+  }
+
+  onSelectChange(){
+
   }
   invoke_event(){
     if(this.state.invoke.includes(',')){
@@ -163,9 +169,18 @@ connection.start().then(function () {
     return (
         <div>
             <form>
+            <div className="form-group row">
+              <label htmlFor="staticEmail" className="col-sm-2 col-form-label">Socket Type</label>
+              <div className="col-sm-1">
+              <select className="selectpicker" onChange={this.onSelectChange}>
+                  <option value="mvc">ASP.NET MVC</option>
+                  <option value="core">ASP.NET Core</option>
+              </select>
+              </div>
+            </div>
             <div>
                 <div className="form-group row">
-                    <label htmlFor="inputPassword" className="col-sm-2 col-form-label">SignalR Address</label>
+                    <label className="col-sm-2 col-form-label">SignalR Address</label>
                     <div className="col-sm-2">
                       <input type="text" value={this.state.uri} onClick={() =>{this.set_suggestion_visibility('uri')}} className="form-control" onChange={this.uri_change.bind(this)} placeholder="http://localhost:65297" />
                       <div className="suggestbox" style={{display: this.state.show_uri_suggestion ? "block" : "none" }}>
@@ -176,7 +191,7 @@ connection.start().then(function () {
                         </ul>
                       </div>
                     </div>
-                    <label htmlFor="inputPassword" className="col-sm-1 col-form-label">HubName</label>
+                    <label className="col-sm-1 col-form-label">HubName</label>
                     <div className="col-sm-2">
                     <input type="text" value={this.state.hub_name} onClick={() =>{this.set_suggestion_visibility('hub')}} className="form-control" onChange={this.hub_name_change.bind(this)} placeholder="ChatHub" />
                     <div className="suggestbox" style={{display: this.state.show_hub_suggestion ? "block" : "none" }}>
@@ -189,14 +204,14 @@ connection.start().then(function () {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="inputPassword" className="col-sm-2 col-form-label">Add Event</label>
+                    <label className="col-sm-2 col-form-label">Add Event</label>
                     <div className="col-sm-5">
                     <TagsInput value={this.state.events} onChange={this.add_event.bind(this)} inputProps={{placeholder: 'Add Event'}} />
                 </div>
                 </div>
             </div>
             <div className="form-group row">
-              <label htmlFor="inputPassword" className="col-sm-2 col-form-label">Status</label>
+              <label className="col-sm-2 col-form-label">Status</label>
               <div className="col-sm-1">
                 <button type="button" className={ 'btn ' + (this.state.connected ? 'btn-success' : 'btn-danger') } disabled>{(this.state.connected ? 'Connected' : 'Disconnected')}</button>
               </div>
@@ -204,7 +219,7 @@ connection.start().then(function () {
             <div className="form-group row"></div>
             <div className="form-group row"></div>
             <div className="form-group row">
-                <label htmlFor="inputPassword" className="col-sm-2 col-form-label"></label>
+                <label className="col-sm-2 col-form-label"></label>
                 <div className="col-sm-1">
                     <button type="button" className="btn btn-dark" onClick={this.connect.bind(this)}>Connect</button>
                 </div>
